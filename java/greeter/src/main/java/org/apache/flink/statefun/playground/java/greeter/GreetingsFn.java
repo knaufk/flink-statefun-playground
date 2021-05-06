@@ -18,16 +18,18 @@
 
 package org.apache.flink.statefun.playground.java.greeter;
 
-import static org.apache.flink.statefun.playground.java.greeter.types.Types.USER_PROFILE_PROTOBUF_TYPE;
 
 import java.util.concurrent.CompletableFuture;
-import org.apache.flink.statefun.playground.java.greeter.types.generated.UserProfile;
+
+import org.apache.flink.statefun.playground.java.greeter.types.UserProfile;
 import org.apache.flink.statefun.sdk.java.Context;
 import org.apache.flink.statefun.sdk.java.StatefulFunction;
 import org.apache.flink.statefun.sdk.java.StatefulFunctionSpec;
 import org.apache.flink.statefun.sdk.java.TypeName;
 import org.apache.flink.statefun.sdk.java.io.KafkaEgressMessage;
 import org.apache.flink.statefun.sdk.java.message.Message;
+
+import static org.apache.flink.statefun.playground.java.greeter.types.Types.USER_PROFILE_JSON_TYPE;
 
 /**
  * A simple function that computes personalized greetings messages based on a given {@link
@@ -46,8 +48,8 @@ final class GreetingsFn implements StatefulFunction {
 
   @Override
   public CompletableFuture<Void> apply(Context context, Message message) {
-    if (message.is(USER_PROFILE_PROTOBUF_TYPE)) {
-      final UserProfile profile = message.as(USER_PROFILE_PROTOBUF_TYPE);
+    if (message.is(USER_PROFILE_JSON_TYPE)) {
+      final UserProfile profile = message.as(USER_PROFILE_JSON_TYPE);
       final String greetings = createGreetingsMessage(profile);
 
       final String userId = context.self().id();

@@ -19,11 +19,11 @@
 package org.apache.flink.statefun.playground.java.greeter;
 
 import static org.apache.flink.statefun.playground.java.greeter.types.Types.USER_LOGIN_JSON_TYPE;
-import static org.apache.flink.statefun.playground.java.greeter.types.Types.USER_PROFILE_PROTOBUF_TYPE;
+import static org.apache.flink.statefun.playground.java.greeter.types.Types.USER_PROFILE_JSON_TYPE;
 
 import java.util.concurrent.CompletableFuture;
 import org.apache.flink.statefun.playground.java.greeter.types.UserLogin;
-import org.apache.flink.statefun.playground.java.greeter.types.generated.UserProfile;
+import org.apache.flink.statefun.playground.java.greeter.types.UserProfile;
 import org.apache.flink.statefun.sdk.java.Context;
 import org.apache.flink.statefun.sdk.java.StatefulFunction;
 import org.apache.flink.statefun.sdk.java.StatefulFunctionSpec;
@@ -65,16 +65,15 @@ final class UserFn implements StatefulFunction {
       context.storage().set(SEEN_COUNT, seenCount);
       context.storage().set(SEEN_TIMESTAMP_MS, nowMs);
 
-      final UserProfile profile =
-          UserProfile.newBuilder()
-              .setName(login.getUserName())
-              .setLoginLocation(login.getLoginType().name())
-              .setSeenCount(seenCount)
-              .setLastSeenDeltaMs(nowMs - lastSeenTimestampMs)
-              .build();
+      final UserProfile profile = new UserProfile();
+      profile.setName(login.getUserName());
+      profile.setLoginLocation(login.getLoginType().name());
+      profile.setSeenCount(seenCount);
+      profile.setLastSeenDeltaMs(nowMs - lastSeenTimestampMs);
+
       context.send(
           MessageBuilder.forAddress(GreetingsFn.TYPENAME, login.getUserId())
-              .withCustomType(USER_PROFILE_PROTOBUF_TYPE, profile)
+              .withCustomType(USER_PROFILE_JSON_TYPE, profile)
               .build());
     } else {
       throw new IllegalArgumentException("Unexpected message type: " + message.valueTypeName());

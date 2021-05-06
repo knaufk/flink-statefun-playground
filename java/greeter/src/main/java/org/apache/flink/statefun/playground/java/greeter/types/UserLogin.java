@@ -57,4 +57,16 @@ public final class UserLogin {
   public LoginType getLoginType() {
     return loginType;
   }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
+
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
+  public void setLoginType(LoginType loginType) {
+    this.loginType = loginType;
+  }
 }
